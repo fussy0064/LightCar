@@ -5,29 +5,43 @@ $auth = new Auth();
 if (!$auth->isLoggedIn()) { header("Location: index.php"); exit(); }
 
 $carManager = new CarManager();
-$error = ""; $success = "";
+$error = ""; $success = ""; $editCar = null;
 
 if (isset($_GET['delete'])) {
     $carManager->delete($_GET['delete']);
     $success = "Car removed successfully!";
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_car'])) {
-    $make = SecurityHelper::sanitize($_POST['make']);
-    $model = SecurityHelper::sanitize($_POST['model']);
-    $price = SecurityHelper::sanitize($_POST['price']);
+if (isset($_GET['edit'])) {
+    $editCar = $carManager->getById($_GET['edit']);
+}
 
-    if (empty($make) || empty($model) || empty($price)) {
-        $error = "All fields are required.";
-    } elseif (!is_numeric($price) || $price <= 0) {
-        $error = "Price must be a positive number.";
+if ($_SERVER["REQUEST_METHOD"] == "POST" && (isset($_POST['add_car']) || isset($_POST['update_car']))) {
+
+    if (!SecurityHelper::csrfCheck($_POST['csrf_token'] ?? '')) {
+        $error = "Invalid session token, please try again.";
     } else {
-        $carManager->create($make, $model, $price);
-        $success = "New car listed successfully!";
+        $make = SecurityHelper::sanitize($_POST['make']);
+        $model = SecurityHelper::sanitize($_POST['model']);
+        $price = SecurityHelper::sanitize($_POST['price']);
+
+        if (empty($make) || empty($model) || empty($price)) {
+            $error = "All fields are required.";
+        } elseif (!is_numeric($price) || $price <= 0) {
+            $error = "Price must be a positive number.";
+        } elseif (isset($_POST['update_car'])) {
+            $status = SecurityHelper::sanitize($_POST['status']);
+            $carManager->update($_POST['car_id'], $make, $model, $price, $status);
+            $success = "Car updated successfully!";
+        } else {
+            $carManager->create($make, $model, $price);
+            $success = "New car listed successfully!";
+        }
     }
 }
 
 $cars = isset($_GET['search']) && !empty($_GET['search']) ? $carManager->search($_GET['search']) : $carManager->getAll();
+$csrfToken = SecurityHelper::csrfToken();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,12 +79,25 @@ $cars = isset($_GET['search']) && !empty($_GET['search']) ? $carManager->search(
         <?php if($success): ?><p style="color:green;"><?= $success ?></p><?php endif; ?>
 
         <div class="form-section">
-            <h3>Add New Car</h3>
+            <h3><?= $editCar ? 'Edit Car' : 'Add New Car' ?></h3>
             <form method="POST">
-                <input type="text" name="make" placeholder="Car Brand (e.g. Toyota)" required>
-                <input type="text" name="model" placeholder="Model (e.g. RAV4)" required>
-                <input type="text" name="price" placeholder="Price" required>
-                <button class="btn" type="submit" name="add_car">Save Car</button>
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+                <?php if ($editCar): ?>
+                    <input type="hidden" name="car_id" value="<?= $editCar['car_id'] ?>">
+                <?php endif; ?>
+                <input type="text" name="make" placeholder="Car Brand (e.g. Toyota)" value="<?= $editCar ? htmlspecialchars($editCar['make']) : '' ?>" required>
+                <input type="text" name="model" placeholder="Model (e.g. RAV4)" value="<?= $editCar ? htmlspecialchars($editCar['model']) : '' ?>" required>
+                <input type="text" name="price" placeholder="Price" value="<?= $editCar ? htmlspecialchars($editCar['price']) : '' ?>" required>
+                <?php if ($editCar): ?>
+                    <select name="status">
+                        <option value="Available" <?= $editCar['status']=='Available'?'selected':'' ?>>Available</option>
+                        <option value="Sold" <?= $editCar['status']=='Sold'?'selected':'' ?>>Sold</option>
+                    </select>
+                    <button class="btn" type="submit" name="update_car">Update Car</button>
+                    <a class="btn" style="background:#6c757d;" href="cars.php">Cancel</a>
+                <?php else: ?>
+                    <button class="btn" type="submit" name="add_car">Save Car</button>
+                <?php endif; ?>
             </form>
         </div>
 
@@ -100,6 +127,7 @@ $cars = isset($_GET['search']) && !empty($_GET['search']) ? $carManager->search(
                         <td>Tsh <?= number_format(htmlspecialchars($car['price'])) ?></td>
                         <td><b><?= $car['status'] ?></b></td>
                         <td>
+                            <a class="btn" href="cars.php?edit=<?= $car['car_id'] ?>">Edit</a>
                             <a class="btn btn-danger" href="cars.php?delete=<?= $car['car_id'] ?>" onclick="return confirm('Are you sure?')">Delete</a>
                         </td>
                     </tr>

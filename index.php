@@ -11,9 +11,14 @@ if ($auth->isLoggedIn()) {
 
 $error = "";
 $success = "";
+$csrfToken = SecurityHelper::csrfToken();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
+
+    if (!SecurityHelper::csrfCheck($_POST['csrf_token'] ?? '')) {
+        $error = "Invalid session token, please try again.";
+    } else
+
     if (isset($_POST['login_user'])) {
         $username = SecurityHelper::sanitize($_POST['username']);
         $password = SecurityHelper::sanitize($_POST['password']);
@@ -91,6 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div id="loginFormSection">
             <h2>login</h2>
             <form method="POST">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                 <label>Username</label>
                 <input type="text" name="username" required>
                 
@@ -106,6 +112,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div id="registerFormSection" class="hidden">
             <h2>register new user</h2>
             <form method="POST">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                 <label>name of the new user</label>
                 <input type="text" name="reg_username" required>
                 

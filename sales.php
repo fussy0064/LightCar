@@ -9,7 +9,9 @@ $carManager = new CarManager();
 $salesManager = new SalesManager();
 $error = ""; $success = "";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['sell_car'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['sell_car']) && !SecurityHelper::csrfCheck($_POST['csrf_token'] ?? '')) {
+    $error = "Invalid session token, please try again.";
+} elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['sell_car'])) {
     $carId = SecurityHelper::sanitize($_POST['car_id']);
     $customerName = SecurityHelper::sanitize($_POST['customer_name']);
     $salePrice = SecurityHelper::sanitize($_POST['sale_price']);
@@ -32,6 +34,7 @@ $availableCars = array_filter($carManager->getAll(), function($car) {
 });
 
 $report = $salesManager->generateSalesReport();
+$csrfToken = SecurityHelper::csrfToken();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,6 +75,7 @@ $report = $salesManager->generateSalesReport();
             <div class="card">
                 <h3>Record New Sale</h3>
                 <form method="POST">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                     <label>Select Car</label>
                     <select name="car_id" required>
                         <option value="">-- Choose Car --</option>
