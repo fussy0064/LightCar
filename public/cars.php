@@ -1,15 +1,19 @@
 <?php
-require_once 'auth.php';
-require_once 'car.php';
+require_once __DIR__.'/../src/Auth.php';
+require_once __DIR__.'/../src/CarManager.php';
 $auth = new Auth();
 if (!$auth->isLoggedIn()) { header("Location: index.php"); exit(); }
 
 $carManager = new CarManager();
 $error = ""; $success = ""; $editCar = null;
 
-if (isset($_GET['delete'])) {
-    $carManager->delete($_GET['delete']);
-    $success = "Car removed successfully!";
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_car'])) {
+    if (!SecurityHelper::csrfCheck($_POST['csrf_token'] ?? '')) {
+        $error = "Invalid session token, please try again.";
+    } else {
+        $carManager->delete($_POST['delete_car']);
+        $success = "Car removed successfully!";
+    }
 }
 
 if (isset($_GET['edit'])) {
@@ -47,7 +51,7 @@ $csrfToken = SecurityHelper::csrfToken();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Manage Cars</title>
+    <title>Inventory Management</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f6f9; }
         .navbar { background: #343a40; padding: 15px; color: white; display: flex; justify-content: space-between; }
@@ -64,16 +68,16 @@ $csrfToken = SecurityHelper::csrfToken();
 </head>
 <body>
     <div class="navbar">
-        <span>Car Sales System</span>
+        <span>LightCar Inventory Tracking System</span>
         <div>
             <a href="dashboard.php">Dashboard</a>
-            <a href="cars.php">Manage Cars</a>
+            <a href="cars.php">Inventory</a>
             <a href="sales.php">Sales & Reports</a>
             <a href="logout.php">Logout</a>
         </div>
     </div>
     <div class="container">
-        <h2>Car Inventory Management</h2>
+        <h2>Inventory Management</h2>
         
         <?php if($error): ?><p style="color:red;"><?= $error ?></p><?php endif; ?>
         <?php if($success): ?><p style="color:green;"><?= $success ?></p><?php endif; ?>
@@ -102,7 +106,7 @@ $csrfToken = SecurityHelper::csrfToken();
         </div>
 
         <div class="table-section">
-            <h3>Car Inventory List</h3>
+            <h3>Stock List</h3>
             <form method="GET">
                 <input type="text" name="search" placeholder="Search by brand or model..." value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>">
                 <button class="btn" type="submit">Search</button>
@@ -128,7 +132,11 @@ $csrfToken = SecurityHelper::csrfToken();
                         <td><b><?= $car['status'] ?></b></td>
                         <td>
                             <a class="btn" href="cars.php?edit=<?= $car['car_id'] ?>">Edit</a>
-                            <a class="btn btn-danger" href="cars.php?delete=<?= $car['car_id'] ?>" onclick="return confirm('Are you sure?')">Delete</a>
+                            <form method="POST" style="display:inline" onsubmit="return confirm('Are you sure?')">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+                                <input type="hidden" name="delete_car" value="<?= $car['car_id'] ?>">
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            </form>
                         </td>
                     </tr>
                     <?php endforeach; ?>

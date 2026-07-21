@@ -1,7 +1,7 @@
 <?php
-require_once 'auth.php';
-require_once 'car.php';
-require_once 'sale.php';
+require_once __DIR__.'/../src/Auth.php';
+require_once __DIR__.'/../src/CarManager.php';
+require_once __DIR__.'/../src/SalesManager.php';
 $auth = new Auth();
 if (!$auth->isLoggedIn()) { header("Location: index.php"); exit(); }
 
@@ -40,7 +40,7 @@ $csrfToken = SecurityHelper::csrfToken();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sales & Reports</title>
+    <title>Stock Movement & Reports</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f6f9; }
         .navbar { background: #343a40; padding: 15px; color: white; display: flex; justify-content: space-between; }
@@ -57,10 +57,10 @@ $csrfToken = SecurityHelper::csrfToken();
 </head>
 <body>
     <div class="navbar">
-        <span>Car Sales System</span>
+        <span>LightCar Inventory Tracking System</span>
         <div>
             <a href="dashboard.php">Dashboard</a>
-            <a href="cars.php">Manage Cars</a>
+            <a href="cars.php">Inventory</a>
             <a href="sales.php">Sales & Reports</a>
             <a href="logout.php">Logout</a>
         </div>

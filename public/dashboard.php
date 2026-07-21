@@ -1,5 +1,5 @@
 <?php
-require_once 'auth.php';
+require_once __DIR__.'/../src/Auth.php';
 $auth = new Auth();
 if (!$auth->isLoggedIn()) { header("Location: index.php"); exit(); }
 ?>
@@ -18,10 +18,10 @@ if (!$auth->isLoggedIn()) { header("Location: index.php"); exit(); }
 </head>
 <body>
     <div class="navbar">
-        <span>Car Sales System - Welcome, <b><?= htmlspecialchars($_SESSION['username']) ?></b> (<?= $_SESSION['role'] ?>)</span>
+        <span>LightCar Inventory Tracking System - Welcome, <b><?= htmlspecialchars($_SESSION['username']) ?></b> (<?= $_SESSION['role'] ?>)</span>
         <div>
             <a href="dashboard.php">Dashboard</a>
-            <a href="cars.php">Manage Cars</a>
+            <a href="cars.php">Inventory</a>
             <a href="sales.php">Sales & Reports</a>
             <a href="logout.php" style="color: #ffc107;">Logout</a>
         </div>
@@ -29,7 +29,7 @@ if (!$auth->isLoggedIn()) { header("Location: index.php"); exit(); }
     <div class="container">
         <h2>Dashboard Overview</h2>
         <div class="card">
-            <h3>Car Inventory Quick Access</h3>
+            <h3>Inventory Quick Access</h3>
             <p>Use the navigation panel above to easily record transactions, manage vehicle listings, and view real-time sales performance metrics.</p>
         </div>
     </div>

@@ -33,5 +33,5 @@ CREATE TABLE IF NOT EXISTS sales (
 
 -- 5. Kuingiza Akaunti ya Kwanza ya Admin (Password yake ni admin123)
 INSERT INTO users (username, password_hash, role) 
-VALUES ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Admin')
+VALUES ('admin', '$2y$10$n0KsrckFbqUIBKJvs6Vu5.LPcqbTNpyn0m9wAJGz0kHLoXy.04Jb6', 'Admin')
 ON DUPLICATE KEY UPDATE user_id=user_id;

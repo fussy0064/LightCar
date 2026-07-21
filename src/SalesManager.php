@@ -1,6 +1,6 @@
 <?php
-require_once 'db.php';
-require_once 'security.php';
+require_once __DIR__.'/Database.php';
+require_once __DIR__.'/SecurityHelper.php';
 
 class SalesManager extends DatabaseModel {
 

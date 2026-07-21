@@ -1,6 +1,6 @@
 <?php
-require_once 'auth.php';
-require_once 'security.php';
+require_once __DIR__.'/../src/Auth.php';
+require_once __DIR__.'/../src/SecurityHelper.php';
 
 $auth = new Auth();
 
@@ -38,7 +38,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['register_user'])) {
         $username = SecurityHelper::sanitize($_POST['reg_username']);
         $password = SecurityHelper::sanitize($_POST['reg_password']);
-        $role = SecurityHelper::sanitize($_POST['reg_role']);
+        // Security fix: public self-registration must never be able to grant
+        // Admin (old code trusted the client-submitted role - anyone could
+        // register themselves as System Admin). Public sign-up = Agent only;
+        // Admin accounts are created directly in the database.
+        $role = 'Agent';
 
         if (empty($username) || empty($password) || empty($role)) {
             $error = "please fill in all the registration fields.";
@@ -71,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Car Sales - Login & Register</title>
+    <title>LightCar Inventory Tracking System - Login</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin:0; }
         .container-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1); width: 350px; }
@@ -119,11 +123,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label>Password</label>
                 <input type="password" name="reg_password" placeholder="not less than 6 charater" required>
                 
-                <label>Role</label>
-                <select name="reg_role" required>
-                    <option value="Agent">Sales Agent</option>
-                    <option value="Admin">System Admin</option>
-                </select>
+                <input type="hidden" name="reg_role" value="Agent">
+                <p style="font-size:12px;color:#777;">New accounts are registered as Sales Agent. Admin accounts are created by the system administrator.</p>
                 
                 <button type="submit" name="register_user" class="btn-primary">Register New User</button>
             </form>
