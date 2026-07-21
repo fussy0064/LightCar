@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS sales (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 5. Kuingiza Akaunti ya Kwanza ya Admin (Password yake ni admin123)
+-- 5. Kuingiza Akaunti ya Kwanza ya Admin (Password yake ni Maggie13!)
 INSERT INTO users (username, password_hash, role) 
-VALUES ('admin', '$2y$10$n0KsrckFbqUIBKJvs6Vu5.LPcqbTNpyn0m9wAJGz0kHLoXy.04Jb6', 'Admin')
+VALUES ('maggie13', '$2y$10$K6.eQ70XJ./jko6g0M0sluOTuP7k6UoCB2/v/THpe1lpr2/O9irJe', 'Admin')
 ON DUPLICATE KEY UPDATE user_id=user_id;

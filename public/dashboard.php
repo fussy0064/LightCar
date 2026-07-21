@@ -23,6 +23,7 @@ if (!$auth->isLoggedIn()) { header("Location: index.php"); exit(); }
             <a href="dashboard.php">Dashboard</a>
             <a href="cars.php">Inventory</a>
             <a href="sales.php">Sales & Reports</a>
+            <?php if ($auth->isAdmin()): ?><a href="users.php">Manage Users</a><?php endif; ?>
             <a href="logout.php" style="color: #ffc107;">Logout</a>
         </div>
     </div>

@@ -28,9 +28,35 @@ class Auth extends DatabaseModel {
         return isset($_SESSION['user_id']);
     }
 
+    public function isAdmin() {
+        return $this->isLoggedIn() && ($_SESSION['role'] ?? '') === 'Admin';
+    }
+
     public function logout() {
         session_unset();
         session_destroy();
+    }
+
+    public function userExists($username) {
+        $stmt = $this->db->prepare("SELECT user_id FROM users WHERE username = ?");
+        $stmt->execute([$username]);
+        return (bool) $stmt->fetch();
+    }
+
+    // Only ever called from users.php, which is Admin-gated. Users can no
+    // longer self-register (public register form removed).
+    public function createUser($username, $password, $role) {
+        if ($this->userExists($username)) {
+            return false;
+        }
+        $hashed = password_hash($password, PASSWORD_BCRYPT);
+        $stmt = $this->db->prepare("INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)");
+        return $stmt->execute([$username, $hashed, $role]);
+    }
+
+    public function deleteUser($userId) {
+        $stmt = $this->db->prepare("DELETE FROM users WHERE user_id = ?");
+        return $stmt->execute([$userId]);
     }
 
     public function getAll() {

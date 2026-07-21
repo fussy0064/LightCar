@@ -62,6 +62,7 @@ $csrfToken = SecurityHelper::csrfToken();
             <a href="dashboard.php">Dashboard</a>
             <a href="cars.php">Inventory</a>
             <a href="sales.php">Sales & Reports</a>
+            <?php if ($auth->isAdmin()): ?><a href="users.php">Manage Users</a><?php endif; ?>
             <a href="logout.php">Logout</a>
         </div>
     </div>
