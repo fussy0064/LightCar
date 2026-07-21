@@ -16,8 +16,13 @@ CREATE TABLE IF NOT EXISTS cars (
     encrypted_make VARCHAR(500) NOT NULL,
     encrypted_model VARCHAR(500) NOT NULL,
     encrypted_price VARCHAR(500) NOT NULL,
+    encrypted_quantity VARCHAR(500) NOT NULL DEFAULT '',
     status VARCHAR(50) NOT NULL DEFAULT 'Available'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 3b. If you already deployed an earlier version of this schema, run this
+-- once to add the new column without losing existing data:
+-- ALTER TABLE cars ADD COLUMN encrypted_quantity VARCHAR(500) NOT NULL DEFAULT '' AFTER encrypted_price;
 
 -- 4. Kutengeneza Table ya Sales (Inayounganisha Cars na Users katika 3NF)
 CREATE TABLE IF NOT EXISTS sales (

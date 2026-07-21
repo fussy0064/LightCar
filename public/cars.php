@@ -28,17 +28,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && (isset($_POST['add_car']) || isset($
         $make = SecurityHelper::sanitize($_POST['make']);
         $model = SecurityHelper::sanitize($_POST['model']);
         $price = SecurityHelper::sanitize($_POST['price']);
+        $quantity = SecurityHelper::sanitize($_POST['quantity']);
 
-        if (empty($make) || empty($model) || empty($price)) {
+        if (empty($make) || empty($model) || empty($price) || $quantity === '') {
             $error = "All fields are required.";
         } elseif (!is_numeric($price) || $price <= 0) {
             $error = "Price must be a positive number.";
+        } elseif (!ctype_digit((string)$quantity) || (int)$quantity < 0) {
+            $error = "Quantity must be a whole number (0 or more).";
         } elseif (isset($_POST['update_car'])) {
             $status = SecurityHelper::sanitize($_POST['status']);
-            $carManager->update($_POST['car_id'], $make, $model, $price, $status);
+            $carManager->update($_POST['car_id'], $make, $model, $price, $quantity, $status);
             $success = "Car updated successfully!";
         } else {
-            $carManager->create($make, $model, $price);
+            $carManager->create($make, $model, $price, $quantity);
             $success = "New car listed successfully!";
         }
     }
@@ -63,7 +66,7 @@ $csrfToken = SecurityHelper::csrfToken();
         th { background-color: #f2f2f2; }
         .btn { padding: 6px 12px; background: #007bff; border: none; color: white; cursor: pointer; border-radius: 4px; text-decoration: none; }
         .btn-danger { background: #dc3545; }
-        input[type="text"] { padding: 8px; width: 200px; }
+        input[type="text"], input[type="number"] { padding: 8px; width: 200px; }
     </style>
 </head>
 <body>
@@ -93,6 +96,7 @@ $csrfToken = SecurityHelper::csrfToken();
                 <input type="text" name="make" placeholder="Car Brand (e.g. Toyota)" value="<?= $editCar ? htmlspecialchars($editCar['make']) : '' ?>" required>
                 <input type="text" name="model" placeholder="Model (e.g. RAV4)" value="<?= $editCar ? htmlspecialchars($editCar['model']) : '' ?>" required>
                 <input type="text" name="price" placeholder="Price" value="<?= $editCar ? htmlspecialchars($editCar['price']) : '' ?>" required>
+                <input type="number" name="quantity" placeholder="Quantity in Stock" min="0" step="1" value="<?= $editCar ? htmlspecialchars($editCar['quantity']) : '' ?>" required>
                 <?php if ($editCar): ?>
                     <select name="status">
                         <option value="Available" <?= $editCar['status']=='Available'?'selected':'' ?>>Available</option>
@@ -119,6 +123,7 @@ $csrfToken = SecurityHelper::csrfToken();
                         <th>Brand (Decrypted)</th>
                         <th>Model (Decrypted)</th>
                         <th>Price (Decrypted)</th>
+                        <th>Quantity</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -130,6 +135,7 @@ $csrfToken = SecurityHelper::csrfToken();
                         <td><?= htmlspecialchars($car['make']) ?></td>
                         <td><?= htmlspecialchars($car['model']) ?></td>
                         <td>Tsh <?= number_format(htmlspecialchars($car['price'])) ?></td>
+                        <td><?= (int) $car['quantity'] ?></td>
                         <td><b><?= $car['status'] ?></b></td>
                         <td>
                             <a class="btn" href="cars.php?edit=<?= $car['car_id'] ?>">Edit</a>

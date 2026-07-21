@@ -8,13 +8,14 @@ interface Searchable {
 
 class CarManager extends DatabaseModel implements Searchable {
 
-    public function create($make, $model, $price) {
+    public function create($make, $model, $price, $quantity) {
         $encMake = SecurityHelper::encrypt($make);
         $encModel = SecurityHelper::encrypt($model);
         $encPrice = SecurityHelper::encrypt($price);
+        $encQuantity = SecurityHelper::encrypt($quantity);
 
-        $stmt = $this->db->prepare("INSERT INTO cars (encrypted_make, encrypted_model, encrypted_price) VALUES (?, ?, ?)");
-        return $stmt->execute([$encMake, $encModel, $encPrice]);
+        $stmt = $this->db->prepare("INSERT INTO cars (encrypted_make, encrypted_model, encrypted_price, encrypted_quantity) VALUES (?, ?, ?, ?)");
+        return $stmt->execute([$encMake, $encModel, $encPrice, $encQuantity]);
     }
 
     public function getAll() {
@@ -26,6 +27,7 @@ class CarManager extends DatabaseModel implements Searchable {
             $car['make'] = SecurityHelper::decrypt($car['encrypted_make']);
             $car['model'] = SecurityHelper::decrypt($car['encrypted_model']);
             $car['price'] = SecurityHelper::decrypt($car['encrypted_price']);
+            $car['quantity'] = SecurityHelper::decrypt($car['encrypted_quantity']);
         }
         return $cars;
     }
@@ -38,17 +40,19 @@ class CarManager extends DatabaseModel implements Searchable {
             $car['make'] = SecurityHelper::decrypt($car['encrypted_make']);
             $car['model'] = SecurityHelper::decrypt($car['encrypted_model']);
             $car['price'] = SecurityHelper::decrypt($car['encrypted_price']);
+            $car['quantity'] = SecurityHelper::decrypt($car['encrypted_quantity']);
         }
         return $car;
     }
 
-    public function update($id, $make, $model, $price, $status) {
+    public function update($id, $make, $model, $price, $quantity, $status) {
         $encMake = SecurityHelper::encrypt($make);
         $encModel = SecurityHelper::encrypt($model);
         $encPrice = SecurityHelper::encrypt($price);
+        $encQuantity = SecurityHelper::encrypt($quantity);
 
-        $stmt = $this->db->prepare("UPDATE cars SET encrypted_make = ?, encrypted_model = ?, encrypted_price = ?, status = ? WHERE car_id = ?");
-        return $stmt->execute([$encMake, $encModel, $encPrice, $status, $id]);
+        $stmt = $this->db->prepare("UPDATE cars SET encrypted_make = ?, encrypted_model = ?, encrypted_price = ?, encrypted_quantity = ?, status = ? WHERE car_id = ?");
+        return $stmt->execute([$encMake, $encModel, $encPrice, $encQuantity, $status, $id]);
     }
 
     public function delete($id) {
