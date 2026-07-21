@@ -1,6 +1,6 @@
 # Hosting Guide — AWS EC2 + Apache2
 
-This guide deploys LightCar so `public/` is the web root (not the project
+This guide deploys MaggieCar so `public/` is the web root (not the project
 root) — required so `src/`, `config/`, and `database/` are never reachable
 by a browser.
 
@@ -106,7 +106,7 @@ sudo certbot --apache -d your-domain.com
 
 ## 10. Test
 - Visit `http://<EC2_PUBLIC_IP>/` (or your domain) — you should see the
-  LightCar login page.
+  MaggieCar login page.
 - Confirm `/var/www/LightCar/src`, `/config`, `/database` are **not**
   reachable directly in a browser (each folder has a `.htaccess` denying
   access; this is a second layer of defense on top of DocumentRoot).

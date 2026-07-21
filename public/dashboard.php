@@ -18,7 +18,7 @@ if (!$auth->isLoggedIn()) { header("Location: index.php"); exit(); }
 </head>
 <body>
     <div class="navbar">
-        <span>LightCar Inventory Tracking System - Welcome, <b><?= htmlspecialchars($_SESSION['username']) ?></b> (<?= $_SESSION['role'] ?>)</span>
+        <span>MaggieCar Inventory Tracking System - Welcome, <b><?= htmlspecialchars($_SESSION['username']) ?></b> (<?= $_SESSION['role'] ?>)</span>
         <div>
             <a href="dashboard.php">Dashboard</a>
             <a href="cars.php">Inventory</a>
@@ -31,7 +31,6 @@ if (!$auth->isLoggedIn()) { header("Location: index.php"); exit(); }
         <h2>Dashboard Overview</h2>
         <div class="card">
             <h3>Inventory Quick Access</h3>
-            <p>Use the navigation panel above to easily record transactions, manage vehicle listings, and view real-time sales performance metrics.</p>
         </div>
     </div>
 </body>

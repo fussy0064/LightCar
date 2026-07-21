@@ -1,4 +1,4 @@
-# LightCar — Car Sales Management System
+# MaggieCar — Inventory Tracking System
 
 BIT 2 – Internet and Web Development — Individual Assignment
 College of Business Education (CBE)
@@ -6,7 +6,7 @@ College of Business Education (CBE)
 ## 1. Problem Background
 Small car dealerships often track inventory and sales on paper or in
 spreadsheets. This causes lost records, no central sales history, and no
-easy way to see which cars are still available. LightCar is a small
+easy way to see which cars are still available. MaggieCar is a small
 web system that lets dealership staff log in, manage the car inventory,
 record sales, and see a basic sales report — all in one place.
 

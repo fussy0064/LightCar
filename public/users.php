@@ -70,7 +70,7 @@ $csrfToken = SecurityHelper::csrfToken();
 </head>
 <body>
     <div class="navbar">
-        <span>LightCar Inventory Tracking System</span>
+        <span>MaggieCar Inventory Tracking System</span>
         <div>
             <a href="dashboard.php">Dashboard</a>
             <a href="cars.php">Inventory</a>

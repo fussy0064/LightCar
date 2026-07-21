@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login_user'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>LightCar Inventory Tracking System - Login</title>
+    <title>MaggieCar Inventory Tracking System - Login</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin:0; }
         .container-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1); width: 350px; }
@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['login_user'])) {
 </head>
 <body>
     <div class="container-box">
-        <h2>LightCar Login</h2>
+        <h2>MaggieCar Login</h2>
         <?php if($error): ?><p class="error"><?= $error ?></p><?php endif; ?>
 
         <form method="POST">
